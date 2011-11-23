@@ -16,14 +16,14 @@
         android:label="@string/app_name" android:debuggable="true">
         <activity
             android:label="@string/app_name"
-            android:name=".ActivityMain" >
+            android:name=".ActivityMain" android:launchMode="singleInstance">
             <intent-filter >
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <service android:name=".services.Tracker"></service>
+        <service android:name=".services.GpsTrackerService"></service>
     </application>
 
 </manifest>

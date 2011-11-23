@@ -23,7 +23,7 @@ public class SatelliteInfo
 	@Override
 	public String toString()
 	{
-		return String.format("Prn: %02d, Snr: %0.00f, A: %b, E: %b, F: %b", prn, snr, hasAlmanac, hasEphemeris, usedInFix);
+		return String.format("Prn: %02d, Snr: %02.2f, A: %b, E: %b, F: %b", prn, snr, hasAlmanac, hasEphemeris, usedInFix);
 	}
 
 	public int getPrn()

@@ -106,7 +106,16 @@ public class SnrFrame
 	{
 		StringBuilder sb = new StringBuilder();
 		sb.append(TIME.format(new Date(time))).append('\n');
-		sb.append("Location: ").append(location).append('\n');
+		sb.append("Location:\n");
+		if(location != null)
+		{
+			sb.append(String.format("Lat: %02.3f\nLng: %02.3f\nSpd: %03.2f\nBrn: %03.2f\nAcc: %03.2f\n", location.getLatitude(), location.getLongitude(), location.getSpeed(), location.getBearing(), location.getAccuracy()));
+		}
+		else
+		{
+			sb.append("null\n");
+		}
+		sb.append("Tracking: ").append(satellites.length).append(" satellites\n");
 		for(SatelliteInfo info : satellites)
 		{
 			sb.append(info).append('\n');

@@ -15,6 +15,11 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import com.binartech.gpssignaltracker.ActivityMain;
+
+import android.R;
+import android.app.Notification;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
 import android.location.GpsSatellite;
@@ -30,12 +35,13 @@ import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
 import android.util.Log;
 
-public class Tracker extends Service
+public class GpsTrackerService extends Service
 {
+	private static final int NTF_ID = 0x0BABCA;
 	public static final String KEY_STRING_DESCRIPTION = "com.binartech.gpssignaltracker.string_desc";
 	public static final String ACTION_NEW_DATA = "com.binartech.gpssignaltracker.action_new_data";
 	public static final String KEY_BYTE_ARRAY_DATA = "com.binartech.gpssignaltracker.key_marshalled_data";
-	private static final String TAG = Tracker.class.getSimpleName();
+	private static final String TAG = GpsTrackerService.class.getSimpleName();
 	public static boolean isRunning;
 	private WakeLock mWakeLock;
 	private File mLogDir;
@@ -130,6 +136,13 @@ public class Tracker extends Service
 		PowerManager power = (PowerManager)getSystemService(POWER_SERVICE);
 		mWakeLock = power.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, TAG);
 		mWakeLock.acquire();
+		Notification ntf = new Notification(com.binartech.gpssignaltracker.R.drawable.ic_launcher, "Gps signal tracking is active.", System.currentTimeMillis());
+		ntf.flags = Notification.FLAG_NO_CLEAR|Notification.FLAG_ONGOING_EVENT;
+		Intent intent = new Intent(this, ActivityMain.class);
+		intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_SINGLE_TOP);
+		ntf.setLatestEventInfo(this, "Tracking enabled", "Gps signal tracking is active.", PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT));
+		startForeground(NTF_ID, ntf);
+		isRunning = true;
 	}
 
 	@Override
@@ -161,6 +174,8 @@ public class Tracker extends Service
 			Log.w(TAG, e);
 			//#endif
 		}
+		isRunning = false;
+		stopForeground(true);
 		mWakeLock.release();
 		super.onDestroy();
 	}
@@ -191,7 +206,8 @@ public class Tracker extends Service
 						final long now = System.currentTimeMillis();
 						GpsStatus status = mLocationManager.getGpsStatus(null);
 						list.clear();
-						for(GpsSatellite sat : status.getSatellites())
+						final Iterable<GpsSatellite> satellites = status.getSatellites();
+						for(GpsSatellite sat : satellites)
 						{
 							list.add(sat);
 						}

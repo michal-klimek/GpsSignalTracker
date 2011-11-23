@@ -4,7 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 
 import com.binartech.gpssignaltracker.services.SnrFrame;
-import com.binartech.gpssignaltracker.services.Tracker;
+import com.binartech.gpssignaltracker.services.GpsTrackerService;
 
 import android.app.Activity;
 import android.content.BroadcastReceiver;
@@ -14,6 +14,7 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -36,9 +37,9 @@ public class ActivityMain extends Activity
 		mStop = (Button)findViewById(R.id.main_button_stop);
 		mEdit = (EditText)findViewById(R.id.main_edittext);
 		mText = (TextView)findViewById(R.id.main_textview_status);
-		mStart.setEnabled(!Tracker.isRunning);
-		mStop.setEnabled(Tracker.isRunning);
-		registerReceiver(mReceiver, new IntentFilter(Tracker.ACTION_NEW_DATA));
+		mStart.setEnabled(!GpsTrackerService.isRunning);
+		mStop.setEnabled(GpsTrackerService.isRunning);
+		registerReceiver(mReceiver, new IntentFilter(GpsTrackerService.ACTION_NEW_DATA));
 	}
 	
 	@Override
@@ -53,7 +54,7 @@ public class ActivityMain extends Activity
 		@Override
 		public void onReceive(Context context, Intent intent)
 		{
-			byte[] marshal = intent.getByteArrayExtra(Tracker.KEY_BYTE_ARRAY_DATA);
+			byte[] marshal = intent.getByteArrayExtra(GpsTrackerService.KEY_BYTE_ARRAY_DATA);
 			try
 			{
 				DataInputStream dis = new DataInputStream(new ByteArrayInputStream(marshal));
@@ -80,13 +81,20 @@ public class ActivityMain extends Activity
 				{
 					name = "Unnamed";
 				}
-				Intent intent = new Intent(this, Tracker.class);
-				intent.putExtra(Tracker.KEY_STRING_DESCRIPTION, name);
+				Intent intent = new Intent(this, GpsTrackerService.class);
+				intent.putExtra(GpsTrackerService.KEY_STRING_DESCRIPTION, name);
 				startService(intent);
+				mStart.setEnabled(false);
+				mStop.setEnabled(true);
+				InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+				imm.hideSoftInputFromWindow(mEdit.getWindowToken(), 0);
+
 			}break;
 			case R.id.main_button_stop:
 			{
-				stopService(new Intent(this, Tracker.class));
+				stopService(new Intent(this, GpsTrackerService.class));
+				mStart.setEnabled(true);
+				mStop.setEnabled(false);
 			}break;
 		}
 	}
