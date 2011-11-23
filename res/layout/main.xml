@@ -2,11 +2,50 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:orientation="vertical" >
+    android:orientation="vertical" android:padding="5dp">
 
     <TextView
-        android:layout_width="fill_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/hello" />
+        android:text="Log description:"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <EditText
+        android:id="@+id/main_edittext"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" android:layout_marginTop="5dp" android:hint="Enter description here" android:inputType="text|textNoSuggestions|textFilter" android:imeOptions="actionDone">
+
+        <requestFocus />
+    </EditText>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" android:weightSum="2" android:gravity="center">
+
+        <Button
+            android:id="@+id/main_button_start"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Start logging" android:layout_weight="1" android:onClick="onClick"/>
+
+        <Button
+            android:id="@+id/main_button_stop"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Stop logging" android:layout_weight="1" android:onClick="onClick"/>
+
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Status:"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <TextView
+        android:id="@+id/main_textview_status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
 
 </LinearLayout>
