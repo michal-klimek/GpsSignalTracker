@@ -39,6 +39,11 @@ public class ActivityMain extends Activity
 		mText = (TextView)findViewById(R.id.main_textview_status);
 		mStart.setEnabled(!GpsTrackerService.isRunning);
 		mStop.setEnabled(GpsTrackerService.isRunning);
+		if(GpsTrackerService.isRunning)
+		{
+			InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+			imm.hideSoftInputFromWindow(mEdit.getWindowToken(), 0);
+		}
 		registerReceiver(mReceiver, new IntentFilter(GpsTrackerService.ACTION_NEW_DATA));
 	}
 	
