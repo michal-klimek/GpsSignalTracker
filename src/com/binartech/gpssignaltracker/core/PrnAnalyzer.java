@@ -39,11 +39,17 @@ public class PrnAnalyzer
 		{
 			final int[] prns = frame.getPrns();
 			final int length = prns.length;
+			pr.print(frame.getTime());
+			pr.print(';');
 			for(int i = 0; i < prnsCount; ++i)
 			{
 				if(i < length)
 				{
 					pr.printf("%02d;", prns[i]);
+				}
+				else
+				{
+					pr.print("00;");
 				}
 			}
 			pr.println();

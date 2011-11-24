@@ -3,7 +3,7 @@ package com.binartech.gpssignaltracker.core;
 import java.io.DataInput;
 import java.io.IOException;
 
-public class SatelliteInfo
+public class SatelliteInfo implements Comparable<SatelliteInfo>
 {
 	private final int prn;
 	private final float azimuth, elevation, snr;
@@ -20,6 +20,12 @@ public class SatelliteInfo
 		usedInFix = dis.readBoolean();
 	}
 	
+	@Override
+	public int compareTo(SatelliteInfo another)
+	{
+		return prn - another.prn;
+	}
+
 	@Override
 	public String toString()
 	{
