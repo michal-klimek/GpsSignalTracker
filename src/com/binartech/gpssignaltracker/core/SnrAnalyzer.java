@@ -47,6 +47,7 @@ public class SnrAnalyzer
 	public void printCSV(PrintStream pr)
 	{
 		final int count = mUniquePrns.length;
+		pr.print("time;");
 		for(int prn : mUniquePrns)
 		{
 			pr.printf("%02d;", prn);
@@ -58,6 +59,7 @@ public class SnrAnalyzer
 			final int length = sats.length;
 			Arrays.sort(sats);
 			pr.print(frame.getTime());
+			pr.print(';');
 			int satIndex = 0;
 			for(int i = 0; i < count; ++i)
 			{

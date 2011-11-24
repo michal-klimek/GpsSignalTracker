@@ -1,10 +1,12 @@
 package com.binartech.gpssignaltracker.core;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.PrintStream;
 
 import android.app.Activity;
@@ -13,10 +15,13 @@ import android.app.AlertDialog.Builder;
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.os.Environment;
+import android.util.Log;
 
 public class ConvertingTask extends AsyncTask<Void, Void, Integer>
 {
-
+	//#ifdef DEBUG
+	private static final String TAG = ConvertingTask.class.getSimpleName();
+	//#endif
 	private final Activity mParent;
 	private ProgressDialog mDialog;
 
@@ -28,12 +33,18 @@ public class ConvertingTask extends AsyncTask<Void, Void, Integer>
 	@Override
 	protected Integer doInBackground(Void... params)
 	{
+		//#ifdef DEBUG
+		Log.i(TAG, "Conversion started");
+		//#endif
 		int filesConverted = 0;
 		if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState()))
 		{
 			File logDir = new File(Environment.getExternalStorageDirectory(), "Binartech");
 			logDir = new File(logDir, "GpsSignalTracker");
 			File[] dirs = logDir.listFiles(new DirFilter());
+			//#ifdef DEBUG
+			Log.d(TAG, "Compatible directories"+dirs.length);
+			//#endif
 			for (File dir : dirs)
 			{
 				final File prnchanges = new File(dir, "prnchanges.bin");
@@ -50,7 +61,9 @@ public class ConvertingTask extends AsyncTask<Void, Void, Integer>
 				}
 				catch (Exception e)
 				{
-
+					//#ifdef DEBUG
+					Log.w(TAG, e);
+					//#endif
 				}
 				finally
 				{
@@ -71,7 +84,9 @@ public class ConvertingTask extends AsyncTask<Void, Void, Integer>
 				}
 				catch (Exception e)
 				{
-
+					//#ifdef DEBUG
+					Log.w(TAG, e);
+					//#endif
 				}
 				finally
 				{
@@ -88,13 +103,15 @@ public class ConvertingTask extends AsyncTask<Void, Void, Integer>
 				PrintStream pr = null;
 				try
 				{
-					pr = new PrintStream(prnCsv);
+					pr = new PrintStream(new BufferedOutputStream(new FileOutputStream(prnCsv), 512 * 1024), false);
 					prnAnalyzer.printCSV(pr);
 					filesConverted++;
 				}
 				catch (Exception e)
 				{
-
+					//#ifdef DEBUG
+					Log.w(TAG, e);
+					//#endif
 				}
 				finally
 				{
@@ -106,13 +123,15 @@ public class ConvertingTask extends AsyncTask<Void, Void, Integer>
 				}
 				try
 				{
-					pr = new PrintStream(snrCsv);
+					pr = new PrintStream(new BufferedOutputStream(new FileOutputStream(snrCsv), 512 * 1024), false);
 					snrAnalyzer.printCSV(pr);
 					filesConverted++;
 				}
 				catch (Exception e)
 				{
-
+					//#ifdef DEBUG
+					Log.w(TAG, e);
+					//#endif
 				}
 				finally
 				{
