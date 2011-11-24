@@ -1,4 +1,4 @@
-package com.binartech.gpssignaltracker.services;
+package com.binartech.gpssignaltracker.core;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataInput;

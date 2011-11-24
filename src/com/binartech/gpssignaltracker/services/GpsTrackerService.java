@@ -16,6 +16,8 @@ import java.util.HashMap;
 import java.util.List;
 
 import com.binartech.gpssignaltracker.ActivityMain;
+import com.binartech.gpssignaltracker.core.PrnFrame;
+import com.binartech.gpssignaltracker.core.SnrFrame;
 
 import android.R;
 import android.app.Notification;
@@ -213,7 +215,7 @@ public class GpsTrackerService extends Service
 						}
 						try
 						{
-							writePrnFrame(mPrnChanges, list, now);
+							PrnFrame.writePrnFrame(mPrnChanges, list, now);
 						}
 						catch (Exception e)
 						{
@@ -292,17 +294,5 @@ public class GpsTrackerService extends Service
 	private OutputStream openFileOutput(File file) throws IOException
 	{
 		return new BufferedOutputStream(new FileOutputStream(file), 16 * 1024);
-	}
-	
-	public static void writePrnFrame(DataOutput dos, List<GpsSatellite> sats, long time) throws IOException
-	{
-		dos.writeLong(time);
-		dos.writeInt(sats.size());
-		for(GpsSatellite sat : sats)
-		{
-			dos.writeInt(sat.getPrn());
-		}
-	}
-	
-	
+	}	
 }

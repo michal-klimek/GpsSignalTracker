@@ -1,4 +1,4 @@
-package com.binartech.gpssignaltracker.services;
+package com.binartech.gpssignaltracker.core;
 
 import java.io.DataInput;
 import java.io.IOException;

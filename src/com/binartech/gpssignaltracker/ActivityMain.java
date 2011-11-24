@@ -3,7 +3,7 @@ package com.binartech.gpssignaltracker;
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 
-import com.binartech.gpssignaltracker.services.SnrFrame;
+import com.binartech.gpssignaltracker.core.SnrFrame;
 import com.binartech.gpssignaltracker.services.GpsTrackerService;
 
 import android.app.Activity;
