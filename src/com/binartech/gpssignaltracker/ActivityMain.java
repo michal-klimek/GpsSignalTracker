@@ -3,9 +3,6 @@ package com.binartech.gpssignaltracker;
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 
-import com.binartech.gpssignaltracker.core.SnrFrame;
-import com.binartech.gpssignaltracker.services.GpsTrackerService;
-
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -13,11 +10,17 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+
+import com.binartech.gpssignaltracker.core.ConvertingTask;
+import com.binartech.gpssignaltracker.core.SnrFrame;
+import com.binartech.gpssignaltracker.services.GpsTrackerService;
 
 public class ActivityMain extends Activity
 {
@@ -52,6 +55,30 @@ public class ActivityMain extends Activity
 	{
 		unregisterReceiver(mReceiver);
 		super.onDestroy();
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu)
+	{
+		getMenuInflater().inflate(R.menu.main_menu, menu);
+		return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item)
+	{
+		switch(item.getItemId())
+		{
+			case R.id.mi_convert_logs:
+			{
+				ConvertingTask task = new ConvertingTask(this);
+				task.execute();
+			}return true;
+			default:
+			{
+				return super.onOptionsItemSelected(item);
+			}
+		}
 	}
 
 	private final BroadcastReceiver mReceiver = new BroadcastReceiver()

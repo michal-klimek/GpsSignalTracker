@@ -6,9 +6,7 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashSet;
-import java.util.Locale;
 
 import android.location.Location;
 
@@ -46,7 +44,7 @@ public class SnrAnalyzer
 		Arrays.sort(mUniquePrns);
 	}
 	
-	public void printToCSV(PrintStream pr)
+	public void printCSV(PrintStream pr)
 	{
 		final int count = mUniquePrns.length;
 		for(int prn : mUniquePrns)

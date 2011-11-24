@@ -1,10 +1,8 @@
 package com.binartech.gpssignaltracker.services;
 
 import java.io.BufferedOutputStream;
-import java.io.DataOutput;
 import java.io.DataOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -12,14 +10,7 @@ import java.io.PrintStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
 
-import com.binartech.gpssignaltracker.ActivityMain;
-import com.binartech.gpssignaltracker.core.PrnFrame;
-import com.binartech.gpssignaltracker.core.SnrFrame;
-
-import android.R;
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.app.Service;
@@ -37,6 +28,10 @@ import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
 import android.util.Log;
 
+import com.binartech.gpssignaltracker.ActivityMain;
+import com.binartech.gpssignaltracker.core.PrnFrame;
+import com.binartech.gpssignaltracker.core.SnrFrame;
+
 public class GpsTrackerService extends Service
 {
 	private static final int NTF_ID = 0x0BABCA;
@@ -48,12 +43,9 @@ public class GpsTrackerService extends Service
 	private WakeLock mWakeLock;
 	private File mLogDir;
 	private final SimpleDateFormat mFileTime = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss");
-	private int mLastPrnIndex;
-	private HashMap<Integer, Integer> mPrnToIndex = new HashMap<Integer, Integer>();
 	private LocationManager mLocationManager;
 	private DataOutputStream mSnrChanges, mPrnChanges;
 	private boolean isSetUp;
-	private boolean mHasFix;
 	private Location mLastLocation;
 	
 	@Override
@@ -258,12 +250,10 @@ public class GpsTrackerService extends Service
 				}break;
 				case LocationProvider.OUT_OF_SERVICE:
 				{
-					mHasFix = false;
 					mLastLocation = null;
 				}break;
 				case LocationProvider.TEMPORARILY_UNAVAILABLE:
 				{
-					mHasFix = false;
 					mLastLocation = null;
 				}break;
 			}
@@ -286,7 +276,6 @@ public class GpsTrackerService extends Service
 		@Override
 		public void onLocationChanged(Location location)
 		{
-			mHasFix = true;	
 			mLastLocation = location;
 		}
 	};
