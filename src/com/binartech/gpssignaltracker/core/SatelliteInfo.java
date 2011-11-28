@@ -1,7 +1,12 @@
 package com.binartech.gpssignaltracker.core;
 
 import java.io.DataInput;
+import java.io.DataOutput;
 import java.io.IOException;
+
+import com.binartech.gpssignaltracker.services.GpsTrackerService;
+
+import android.location.GpsSatellite;
 
 public class SatelliteInfo implements Comparable<SatelliteInfo>
 {
@@ -9,6 +14,19 @@ public class SatelliteInfo implements Comparable<SatelliteInfo>
 	private final float azimuth, elevation, snr;
 	private final boolean hasAlmanac, usedInFix, hasEphemeris;
 	
+	
+	
+	public SatelliteInfo(int prn, float azimuth, float elevation, float snr)
+	{
+		this.prn = prn;
+		this.azimuth = azimuth;
+		this.elevation = elevation;
+		this.snr = snr;
+		hasAlmanac = false;
+		hasEphemeris = false;
+		usedInFix = false;
+	}
+
 	public SatelliteInfo(DataInput dis) throws IOException
 	{
 		prn = dis.readInt();
@@ -20,12 +38,23 @@ public class SatelliteInfo implements Comparable<SatelliteInfo>
 		usedInFix = dis.readBoolean();
 	}
 	
+	public void writeToStream(DataOutput dos) throws IOException
+	{
+		dos.writeInt(prn);
+		dos.writeFloat(snr);
+		dos.writeFloat(azimuth);
+		dos.writeFloat(elevation);
+		dos.writeBoolean(hasAlmanac);
+		dos.writeBoolean(hasEphemeris);
+		dos.writeBoolean(usedInFix);
+	}
+	
 	@Override
 	public int compareTo(SatelliteInfo another)
 	{
 		return prn - another.prn;
 	}
-
+	
 	@Override
 	public String toString()
 	{

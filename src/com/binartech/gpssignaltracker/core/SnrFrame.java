@@ -6,6 +6,7 @@ import java.io.DataOutput;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -42,7 +43,42 @@ public class SnrFrame
 		}
 	}
 	
+	public static void writeSnrChangeFrame(DataOutput dos, ArrayList<SatelliteInfo> sats, Location loc, long time) throws IOException
+	{
+		dos.writeLong(time);
+		final boolean hasFix = loc != null;
+		dos.writeBoolean(hasFix);
+		if(hasFix)
+		{
+			dos.writeDouble(loc.getLatitude());
+			dos.writeDouble(loc.getLongitude());
+			dos.writeFloat(loc.getSpeed());
+			dos.writeFloat(loc.getBearing());
+			dos.writeFloat(loc.getAccuracy());
+		}
+		dos.writeInt(sats.size());
+		for(SatelliteInfo sat : sats)
+		{
+			sat.writeToStream(dos);
+		}
+	}
+	
 	public static byte[] marshalSnrChangeFrame(List<GpsSatellite> sats, Location loc, long time)
+	{
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		try
+		{
+			DataOutputStream dos = new DataOutputStream(baos);
+			writeSnrChangeFrame(dos, sats, loc, time);
+			return baos.toByteArray();
+		}
+		catch (Exception e)
+		{
+			return null;
+		}
+	}
+	
+	public static byte[] marshalSnrChangeFrame(ArrayList<SatelliteInfo> sats, Location loc, long time)
 	{
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		try

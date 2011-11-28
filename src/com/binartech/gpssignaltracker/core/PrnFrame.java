@@ -3,6 +3,7 @@ package com.binartech.gpssignaltracker.core;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import android.location.GpsSatellite;
@@ -14,6 +15,16 @@ public class PrnFrame
 		dos.writeLong(time);
 		dos.writeInt(sats.size());
 		for(GpsSatellite sat : sats)
+		{
+			dos.writeInt(sat.getPrn());
+		}
+	}
+	
+	public static void writePrnFrame(DataOutput dos, ArrayList<SatelliteInfo> sats, long time) throws IOException
+	{
+		dos.writeLong(time);
+		dos.writeInt(sats.size());
+		for(SatelliteInfo sat : sats)
 		{
 			dos.writeInt(sat.getPrn());
 		}

@@ -10,6 +10,8 @@ import java.io.PrintStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import android.app.Notification;
 import android.app.PendingIntent;
@@ -21,6 +23,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.location.LocationProvider;
+import android.location.GpsStatus.NmeaListener;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.IBinder;
@@ -30,6 +33,7 @@ import android.util.Log;
 
 import com.binartech.gpssignaltracker.ActivityMain;
 import com.binartech.gpssignaltracker.core.PrnFrame;
+import com.binartech.gpssignaltracker.core.SatelliteInfo;
 import com.binartech.gpssignaltracker.core.SnrFrame;
 
 public class GpsTrackerService extends Service
@@ -104,7 +108,8 @@ public class GpsTrackerService extends Service
 						return;
 					}
 					mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, mLocationListener);
-					mLocationManager.addGpsStatusListener(mGpsStatusListener);
+					/*mLocationManager.addGpsStatusListener(mGpsStatusListener);*/
+					mLocationManager.addNmeaListener(mNmeaListener);
 				}
 				else
 				{
@@ -147,7 +152,8 @@ public class GpsTrackerService extends Service
 		//#endif
 		isSetUp = false;
 		mLocationManager.removeUpdates(mLocationListener);
-		mLocationManager.removeGpsStatusListener(mGpsStatusListener);
+		/*mLocationManager.removeGpsStatusListener(mGpsStatusListener);*/
+		mLocationManager.removeNmeaListener(mNmeaListener);
 		try
 		{
 			mSnrChanges.close();
@@ -180,6 +186,91 @@ public class GpsTrackerService extends Service
 		return null;
 	}
 	
+	private final NmeaListener mNmeaListener = new NmeaListener()
+	{
+		private final Pattern regex = Pattern.compile("\\$GPGSV,(\\d*),(\\d*),(\\d*)((?:,\\d*,\\d*,\\d*,\\d*)+)");
+		private final Pattern satRegex = Pattern.compile(",(\\d*),(\\d*),(\\d*),(\\d*)");
+		private final ArrayList<SatelliteInfo> mSats = new ArrayList<SatelliteInfo>();
+		@Override
+		public void onNmeaReceived(long now, String nmea)
+		{
+			Matcher m;
+			m = regex.matcher(nmea);
+			if(m.find())
+			{
+				try
+				{
+					final int messageCount = Integer.parseInt(m.group(1));
+					final int messageNumber = Integer.parseInt(m.group(2));
+					final int satellites = Integer.parseInt(m.group(3));
+					//#ifdef DEBUG
+					Log.v(TAG, String.format("Messages: %d, Message number: %d, Satellites in view: %d", messageCount, messageNumber, satellites));
+					//#endif
+					if(messageNumber == 1)
+					{
+						mSats.clear();
+					}
+					final String sats = m.group(4);
+					Matcher s = satRegex.matcher(sats);
+					while(s.find())
+					{
+						try
+						{
+							final String sprn = s.group(1);
+							final String selev = s.group(2);
+							final String sazimuth = s.group(3);
+							final String ssnr = s.group(4);
+							final int prn = Integer.parseInt(sprn);
+							final int elev = selev.length() > 0 ? Integer.parseInt(selev) : -1;
+							final int azimuth = sazimuth.length() > 0 ? Integer.parseInt(sazimuth) : -1;
+							final int snr = ssnr.length() > 0 ? Integer.parseInt(ssnr) : -1;
+							mSats.add(new SatelliteInfo(prn, azimuth, elev, snr));
+						}
+						catch (Exception e)
+						{
+							//#ifdef DEBUG
+							Log.w(TAG, e);
+							//#endif
+						}
+					}
+					if(messageNumber == messageCount)
+					{
+						try
+						{
+							PrnFrame.writePrnFrame(mPrnChanges, mSats, now);
+						}
+						catch (Exception e)
+						{
+							//#ifdef DEBUG
+							Log.w(TAG, e);
+							//#endif
+						}
+						try
+						{
+							SnrFrame.writeSnrChangeFrame(mSnrChanges, mSats, mLastLocation, now);
+						}
+						catch (Exception e)
+						{
+							//#ifdef DEBUG
+							Log.w(TAG, e);
+							//#endif
+						}
+						byte[] data = SnrFrame.marshalSnrChangeFrame(mSats, mLastLocation, now);
+						Intent intent = new Intent(ACTION_NEW_DATA);
+						intent.putExtra(KEY_BYTE_ARRAY_DATA, data);
+						sendBroadcast(intent);
+					}
+				}
+				catch (Exception e)
+				{
+					//#ifdef DEBUG
+					Log.w(TAG, e);
+					//#endif
+				}
+			}
+		}
+	};
+	/*
 	private final GpsStatus.Listener mGpsStatusListener = new GpsStatus.Listener()
 	{
 		private final ArrayList<GpsSatellite> list = new ArrayList<GpsSatellite>();
@@ -234,7 +325,7 @@ public class GpsTrackerService extends Service
 				}
 			}
 		}
-	};
+	};*/
 	
 	private final LocationListener mLocationListener = new LocationListener()
 	{
