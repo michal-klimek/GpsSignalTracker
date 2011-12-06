@@ -2,6 +2,8 @@
 <resources>
 
     <string name="hello">Hello World, ActivityMain!</string>
-    <string name="app_name">GpsSignalTracker</string>
+    <string name="app_name">Gps Signal Tracker</string>
+    <string name="af_gps_test">:affinityGpsTest</string>
+    <string name="af_main">:affinityMain</string>
 
 </resources>
