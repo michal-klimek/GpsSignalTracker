@@ -5,6 +5,7 @@ import java.io.PrintWriter;
 import java.util.Date;
 
 import android.app.Activity;
+import android.app.AlarmManager;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
@@ -101,6 +102,10 @@ public class ActivityGpsTest extends Activity implements LogAdapter
 			case R.id.gtest_button_normalstart:
 			{
 				runTest(Option.NORMAL);
+			}break;
+			case R.id.gtest_button_hotstart_test_periodic:
+			{
+				PeriodicReceiver.setPeriodicWork(this, (long)30000);
 			}break;
 		}
 	}

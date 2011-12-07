@@ -23,7 +23,7 @@
     <application
         android:debuggable="true"
         android:icon="@drawable/ic_launcher"
-        android:label="@string/app_name" >
+        android:label="@string/app_name" android:name="GlobalApp">
         <activity
             android:label="@string/app_name"
             android:launchMode="singleInstance"
@@ -47,6 +47,13 @@
                 <action android:name="android.intent.action.MAIN"/>
             </intent-filter>
         </activity>
+        <service android:name=".services.GpsHotStartTest"></service>
+        <receiver android:name="PeriodicReceiver">
+            <intent-filter>
+                <action android:name="com.binartech.gpssignaltracker.action_awake_periodic"/>
+                <action android:name="com.binartech.gpssignaltracker.action_awake_disable"/>
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

@@ -18,6 +18,11 @@ public class Common
 		return new File(Environment.getExternalStorageDirectory(), "Binartech/GpsStartTester");
 	}
 	
+	public static File getGpsHotStartTestDir()
+	{
+		return new File(Environment.getExternalStorageDirectory(), "Binartech/GpsHotStartTester");
+	}
+	
 	public static boolean isAirplaneModeOn(Context context)
 	{
 		return Settings.System.getInt(context.getContentResolver(), Settings.System.AIRPLANE_MODE_ON, 0) != 0;
@@ -50,4 +55,6 @@ public class Common
 			context.sendBroadcast(poke);
 		}
 	}
+	
+
 }
