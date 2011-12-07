@@ -4,10 +4,6 @@ import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
 
-import com.binartech.gpssignaltracker.services.GpsTrackerService;
-
-import android.location.GpsSatellite;
-
 public class SatelliteInfo implements Comparable<SatelliteInfo>
 {
 	private final int prn;

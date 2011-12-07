@@ -4,28 +4,19 @@ import java.io.File;
 import java.io.PrintWriter;
 import java.util.Date;
 
-import com.binartech.gpssignaltracker.core.Common;
-import com.binartech.gpssignaltracker.core.tests.GpsStartTest;
-import com.binartech.gpssignaltracker.core.tests.GpsStartTest.Option;
-import com.binartech.gpssignaltracker.core.tests.LogAdapter;
-
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.AlertDialog.Builder;
-import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.DialogInterface.OnClickListener;
-import android.location.LocationManager;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
-import android.provider.Settings;
 import android.view.View;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.binartech.gpssignaltracker.core.Common;
+import com.binartech.gpssignaltracker.core.tests.GpsStartTest;
+import com.binartech.gpssignaltracker.core.tests.GpsStartTest.Option;
+import com.binartech.gpssignaltracker.core.tests.LogAdapter;
 
 public class ActivityGpsTest extends Activity implements LogAdapter
 {

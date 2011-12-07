@@ -10,10 +10,9 @@ import java.io.PrintStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import android.app.Notification;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
@@ -23,7 +22,6 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.location.LocationProvider;
-import android.location.GpsStatus.NmeaListener;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.IBinder;
@@ -33,7 +31,6 @@ import android.util.Log;
 
 import com.binartech.gpssignaltracker.ActivityMain;
 import com.binartech.gpssignaltracker.core.PrnFrame;
-import com.binartech.gpssignaltracker.core.SatelliteInfo;
 import com.binartech.gpssignaltracker.core.SnrFrame;
 
 public class GpsTrackerService extends Service
@@ -51,6 +48,7 @@ public class GpsTrackerService extends Service
 	private DataOutputStream mSnrChanges, mPrnChanges;
 	private boolean isSetUp;
 	private Location mLastLocation;
+	private NotificationManager mNotificationManager;
 	
 	@Override
 	public void onStart(Intent intent, int startId)
@@ -138,12 +136,14 @@ public class GpsTrackerService extends Service
 		PowerManager power = (PowerManager)getSystemService(POWER_SERVICE);
 		mWakeLock = power.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, TAG);
 		mWakeLock.acquire();
+		mNotificationManager = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
 		Notification ntf = new Notification(com.binartech.gpssignaltracker.R.drawable.ic_launcher, "Gps signal tracking is active.", System.currentTimeMillis());
 		ntf.flags = Notification.FLAG_NO_CLEAR|Notification.FLAG_ONGOING_EVENT;
 		Intent intent = new Intent(this, ActivityMain.class);
 		intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_SINGLE_TOP);
 		ntf.setLatestEventInfo(this, "Tracking enabled", "Gps signal tracking is active.", PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT));
-		startForeground(NTF_ID, ntf);
+		//startForeground(NTF_ID, ntf);
+		mNotificationManager.notify(NTF_ID, ntf);
 		isRunning = true;
 	}
 
@@ -181,7 +181,7 @@ public class GpsTrackerService extends Service
 			//#endif
 		}
 		isRunning = false;
-		stopForeground(true);
+		mNotificationManager.cancel(NTF_ID);
 		mWakeLock.release();
 		super.onDestroy();
 	}
