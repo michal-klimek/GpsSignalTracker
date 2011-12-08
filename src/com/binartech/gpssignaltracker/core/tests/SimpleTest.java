@@ -1,16 +1,20 @@
 package com.binartech.gpssignaltracker.core.tests;
 
 import android.content.Context;
+import android.location.LocationManager;
 
 public abstract class SimpleTest
 {
 	private final LogAdapter mLog;
 	private boolean mIsExecuting;
+	private final LocationManager mLocationManager;
 	
 	public SimpleTest(LogAdapter adapter)
 	{
 		mLog = adapter;
+		mLocationManager = (LocationManager)mLog.getContext().getSystemService(Context.LOCATION_SERVICE);
 	}
+
 	
 	public final void execute()
 	{
@@ -23,7 +27,7 @@ public abstract class SimpleTest
 		mIsExecuting = false;
 	}
 	
-	public boolean isExecuting()
+	public final boolean isExecuting()
 	{
 		return mIsExecuting;
 	}
@@ -47,13 +51,18 @@ public abstract class SimpleTest
 	
 	protected abstract void onCancel();
 	
-	protected Context getContext()
+	protected final Context getContext()
 	{
 		return mLog.getContext();
 	}
 	
-	protected void writeLog(String line)
+	protected final void writeLog(String line)
 	{
 		mLog.writeLog(line);
+	}
+	
+	protected final LocationManager getLocationManager()
+	{
+		return mLocationManager;
 	}
 }

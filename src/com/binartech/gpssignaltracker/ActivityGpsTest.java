@@ -17,7 +17,9 @@ import android.widget.Toast;
 import com.binartech.gpssignaltracker.core.Common;
 import com.binartech.gpssignaltracker.core.tests.GpsStartTest;
 import com.binartech.gpssignaltracker.core.tests.GpsStartTest.Option;
+import com.binartech.gpssignaltracker.core.tests.GpsPredictionTest;
 import com.binartech.gpssignaltracker.core.tests.LogAdapter;
+import com.binartech.gpssignaltracker.core.tests.SimpleTest;
 
 public class ActivityGpsTest extends Activity implements LogAdapter
 {
@@ -26,7 +28,7 @@ public class ActivityGpsTest extends Activity implements LogAdapter
 	private TextView mTextViewLog;
 	private ScrollView mScroller;
 	private PrintWriter mLog;
-	private GpsStartTest mGpsStartTest;
+	private SimpleTest mGpsTest;
 	private Handler mHandler;
 	
 	@Override
@@ -52,9 +54,9 @@ public class ActivityGpsTest extends Activity implements LogAdapter
 	@Override
 	protected void onDestroy()
 	{
-		if(mGpsStartTest != null && mGpsStartTest.isExecuting())
+		if(mGpsTest != null && mGpsTest.isExecuting())
 		{
-			mGpsStartTest.cancel();
+			mGpsTest.cancel();
 		}
 		mLog.close();
 		super.onDestroy();
@@ -105,26 +107,35 @@ public class ActivityGpsTest extends Activity implements LogAdapter
 			}break;
 			case R.id.gtest_button_hotstart_test_periodic:
 			{
-				PeriodicReceiver.setPeriodicWork(this, (long)30000);
+				PeriodicReceiver.setPeriodicWork(this, AlarmManager.INTERVAL_HOUR);
+			}break;
+			case R.id.gtest_gps_prediction_test:
+			{
+				runTest(new GpsPredictionTest(this));
 			}break;
 		}
 	}
 
+	private void runTest(SimpleTest test)
+	{
+		if(mGpsTest == null || !mGpsTest.isExecuting())
+		{
+			mGpsTest = test;
+			mGpsTest.execute();
+		}
+		else
+		{
+			mGpsTest.cancel();
+			mGpsTest = null;
+		}
+	}
+	
 	/**
 	 * 
 	 */
 	private void runTest(Option option)
 	{
-		if(mGpsStartTest == null || !mGpsStartTest.isExecuting())
-		{
-			mGpsStartTest = new GpsStartTest(this, option);
-			mGpsStartTest.execute();
-		}
-		else
-		{
-			mGpsStartTest.cancel();
-			mGpsStartTest = null;
-		}
+		runTest(new GpsStartTest(this, option));
 	}
 
 }

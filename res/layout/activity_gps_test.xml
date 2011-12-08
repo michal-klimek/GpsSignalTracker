@@ -72,6 +72,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Periodic hot start test" android:onClick="onButtonClick"/>
+
+            <Button
+                android:id="@+id/gtest_gps_prediction_test"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Fix prediction test" android:onClick="onButtonClick"/>
 
         </LinearLayout>
 
